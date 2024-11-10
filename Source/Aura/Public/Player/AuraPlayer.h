@@ -6,6 +6,9 @@
 #include "Character/AuraCharacterBase.h"
 #include "AuraPlayer.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+
 /**
  * 
  */
@@ -14,4 +17,16 @@ class AURA_API AAuraPlayer : public AAuraCharacterBase
 {
 	GENERATED_BODY()
 	
+public:
+	AAuraPlayer();
+
+/*
+* Camera Section
+*/
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USpringArmComponent> CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCameraComponent> FollowCamera;
 };
