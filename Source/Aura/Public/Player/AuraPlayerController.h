@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class IEnemyInterface;
 
 /**
  * 
@@ -26,6 +27,8 @@ protected:
 
 	virtual void SetupInputComponent() override;
 
+	virtual void PlayerTick(float DeltaTime) override;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> PlayerInputMappingContext;
@@ -34,4 +37,12 @@ private:
 	TObjectPtr<UInputAction> MoveAction;
 
 	void Move(const FInputActionValue& InputActionValue);
+
+	// 마우스 커서의 Trace를 구현하는 함수
+	void CursorTrace();
+
+	// 이전 프레임에서 커서가 가리킨 인터페이스와 현재 프레임에서 커서가 가리킨 인터페이스를 포인터로 저장
+	// TScriptInterface는 Interface 포인터를 위한 래퍼
+	TScriptInterface<IEnemyInterface> LastCursorHit;
+	TScriptInterface<IEnemyInterface> CurrentCursorHit;
 };

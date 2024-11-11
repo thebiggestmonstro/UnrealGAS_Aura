@@ -5,6 +5,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Interface/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -46,6 +47,13 @@ void AAuraPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
 }
 
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
+}
+
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 {
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
@@ -59,5 +67,59 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	{
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+	}
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	
+	if (!CursorHit.bBlockingHit)
+	{
+		return;
+	}
+
+	// TScriptInterface를 사용한 경우 따로 캐스팅할 필요가 없음
+	// 이전 프레임에서의 커서가 가리킨 Actor와 현재 프레임에서 커서가 가리킨 Actor를 초기화
+	LastCursorHit = CurrentCursorHit;
+	CurrentCursorHit = CursorHit.GetActor();
+
+	if (LastCursorHit == nullptr)
+	{
+		// 지난 프레임에서의 커서가 가리킨 Actor가 null이고 현재 프레임에서의 커서가 가리킨 Actor가 유효한 경우
+		if (CurrentCursorHit != nullptr)
+		{
+			CurrentCursorHit->HighlightActor();
+		}
+		// 지난 프레임에서의 커서가 가리킨 Actor가 null이고 현재 프레임에서의 커서가 가리킨 Actor도 null인 경우
+		else
+		{
+			return;
+		}
+	}
+	else
+	{
+		// 지난 프레임에서의 커서가 가리킨 Actor가 유효하고 현재 프레임에서의 커서가 가리킨 Actor가 null인 경우
+		if (CurrentCursorHit == nullptr)
+		{
+			LastCursorHit->UnHighlightActor();
+		}
+		// 지난 프레임에서의 커서가 가리킨 Actor가 유효하고 현재 프레임에서의 커서가 가리킨 Actor도 유효한 경우
+		// 두 가지로 분기할 수 있음 -> 두 Actor는 같다! 또는 두 Actor는 다르다!
+		else
+		{
+			// 두 Actor는 다르다!
+			if (LastCursorHit != CurrentCursorHit)
+			{
+				LastCursorHit->UnHighlightActor();
+				CurrentCursorHit->HighlightActor();
+			}
+			// 두 Actor는 같다!
+			else
+			{
+				return;
+			}
+		}
 	}
 }
