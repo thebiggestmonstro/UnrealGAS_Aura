@@ -20,13 +20,22 @@ class AURA_API AAuraPlayer : public AAuraCharacterBase
 public:
 	AAuraPlayer();
 
-/*
-* Camera Section
-*/
+	virtual void PossessedBy(AController* InController) override;
+	virtual void OnRep_PlayerState() override;
+
 private:
+	/*
+	* Camera Section
+	*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+private:
+	/*
+	* member function
+	*/
+	void SetAbilityActorInfo();
 };

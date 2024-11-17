@@ -2,9 +2,12 @@
 
 
 #include "Player/AuraPlayer.h"
+#include "Player/AuraPlayerState.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 
 AAuraPlayer::AAuraPlayer()
 {
@@ -29,4 +32,27 @@ AAuraPlayer::AAuraPlayer()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
+}
+
+void AAuraPlayer::PossessedBy(AController* InController)
+{
+	Super::PossessedBy(InController);
+
+	SetAbilityActorInfo();
+}
+
+void AAuraPlayer::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	SetAbilityActorInfo();
+}
+
+void AAuraPlayer::SetAbilityActorInfo()
+{
+	// 서버단계에서 ASC의 OwnerActor와 AvatarActor를 초기화 + BaseCharacter에서 상속된 멤버들을 PlayerState 값으로 초기화
+	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(GetPlayerState());
+	AuraPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(AuraPlayerState, this);
+	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
+	AttributeSet = AuraPlayerState->GetAttributeSet();
 }

@@ -14,12 +14,19 @@ public class Aura : ModuleRules
 			"CoreUObject", 
 			"Engine", 
 			"InputCore",
-            "EnhancedInput"
+            "EnhancedInput",
+            
         });
 
 		PublicIncludePaths.AddRange(new string[] { "Aura" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] 
+		{
+			"GameFeatures",
+            "GameplayAbilities",
+            "GameplayTasks",
+            "GameplayTags",
+        });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
