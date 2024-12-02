@@ -22,10 +22,10 @@ void AAuraPlayerController::BeginPlay()
 	// 그리고 Mapping Context간의 우선순위를 지정하여 여러 액션 간의 충돌을 해결
 	// LocalPlayerSubSystem은 싱글톤 클래스로서 하나의 인스턴스만 존재함
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
-
-	// 현재 만든 PlayerInputMappingContext에 대해 우선 순위를 0으로 지정
-	Subsystem->AddMappingContext(PlayerInputMappingContext, 0);
+	if (Subsystem)
+	{
+		Subsystem->AddMappingContext(PlayerInputMappingContext, 0);
+	}
 
 	// 마우스 커서에 대한 설정
 	bShowMouseCursor = true;
